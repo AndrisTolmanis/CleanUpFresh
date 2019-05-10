@@ -1,0 +1,69 @@
+<resources>
+    <string name="app_name">CleanUp Fresh</string>
+
+    <string name="info_text">Sveiks lietotāj! Šī aplikācija Tev ļauj apskatīt savu punktu bilanci, izmantot NFC nolasīšanas iespēju, redzēt pieejamos apbalvojumus kā arī aktīvākos šķirotājus.  </string>
+
+    <string name="hello">Sveiki, </string>
+    <string name="your_balance">Tava bilance :</string>
+
+    <string name="admin">ADMIN</string>
+    <string name="is_admin">Vai tiešām esi admins?</string>
+
+    <string name="id">ID</string>
+    <string name="username">E-pasts</string>
+    <string name="password">Parole</string>
+    <string name="balance">Bilance</string>
+
+    <string name="nfc_goodie">Izvēlētais apbalvojums : </string>
+    <string name="nfc_points">Nepieciešamie punkti : </string>
+    <string name="nfc_fail">Neizdevās noskenēt apbalvojumu</string>
+    <string name="nfc_waiting">Gaida NFC savienojumu</string>
+    <string name="nfc_NoNfcOnDevice">Šai ierīcei nav pieejams NFC</string>
+    <string name="expensive">Nepietiek punktu</string>
+    <string name="goodie_code">Tava dzēriena kods: </string>
+
+    <string name="name">Nosaukums</string>
+    <string name="price">Vērtība</string>
+    <string name="nfc">NFC</string>
+    <string name="goodie">Balvas</string>
+    <string name="top">Tops</string>
+    <string name="info">Info</string>
+    <string name="ok">Labi</string>
+
+    <string name="login">Pieslēgties</string>
+    <string name="no_users">Nav reģistrētu lietotāju</string>
+    <string name="check_data">Pārbaudi datus!</string>
+    <string name="back">Atpakaļ</string>
+    <string name="backX">X</string>
+
+    <string name="edit_users">Pievienot lietotāju</string>
+    <string name="edit_goodies">Rediģēt apbalvojumus</string>
+
+    <string name="add">Pievienot</string>
+    <string name="update">Rediģēt</string>
+    <string name="delete">Dzēst</string>
+    <string name="view_all">Apskatīt visus</string>
+
+    <string name="error">Kļūda</string>
+    <string name="users">Lietotāji</string>
+    <string name="goodies">Apbalvojumi</string>
+
+    <string name="empty_db">Datubāzē nav ierakstu</string>
+    <string name="add_message">Pievienošana veiksmīga</string>
+    <string name="add_message2">Pievienošana nav veiksmīga</string>
+    <string name="update_message">Atjaunošana veiksmīga</string>
+    <string name="update_message2">Atjaunošana nav veiksmīga</string>
+    <string name="delete_message">Dzēšana veiksmīga</string>
+    <string name="delete_message2">Dzēšana nav veiksmīga</string>
+
+    <string name="entry_error">Aizpildīt visus laukus</string>
+
+    <string name="badEmail">Ievadīt pareizu e-pastu</string>
+    <string name="badPass">Ievadīt paroli</string>
+    <string name="badPassShort">Min. paroles garums ir 6</string>
+    <string name="userAdded">User added</string>
+    <string name="userFailed">Adding failed</string>
+    <string name="loginFailed">Neizdevās pieslēgties</string>
+    <!--<string name="loginSuccess">Izdevās pieslēgties</string>-->
+
+</resources>

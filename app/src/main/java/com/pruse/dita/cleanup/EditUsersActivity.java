@@ -18,8 +18,10 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.Random;
+
 public class EditUsersActivity extends Activity {
-    EditText txtUsername,txtPassword;
+    EditText txtUsername,txtPassword, txtUsersName;
     Button btnAddData;
     private FirebaseAuth mAuth;
     private DatabaseReference mDatabase;
@@ -34,6 +36,7 @@ public class EditUsersActivity extends Activity {
 
         txtUsername = findViewById(R.id.editText_name);
         txtPassword = findViewById(R.id.editText_password);
+        txtUsersName = findViewById(R.id.txtUsersName);
         btnAddData = findViewById(R.id.button_add);
 
         findViewById(R.id.button_add).setOnClickListener(new View.OnClickListener() {
@@ -47,6 +50,7 @@ public class EditUsersActivity extends Activity {
     public void addUser(){
         final String username = txtUsername.getText().toString();
         String password = txtPassword.getText().toString();
+        final String usersName = txtUsersName.getText().toString();
 
         if (username.isEmpty()){
             txtUsername.setError(getString(R.string.badEmail));
@@ -70,8 +74,13 @@ public class EditUsersActivity extends Activity {
                     if (task.isSuccessful()){
                         Toast.makeText(getApplicationContext(), getString(R.string.userAdded),  Toast.LENGTH_SHORT).show();
                         mDatabase.child("userData").child(username.replace(".","-")).child("balance").setValue(0);
-                        mDatabase.child("userData").child(username.replace(".","-")).child("name").setValue("User");
-                        mDatabase.child("userData").child(username.replace(".","-")).child("surname").setValue("User");
+                        if(usersName == "" || usersName == null){
+                            int random = new Random().nextInt();
+                            mDatabase.child("userData").child(username.replace(".","-")).child("usersName").setValue("user"+random);
+                        }else{
+                            mDatabase.child("userData").child(username.replace(".","-")).child("usersName").setValue(usersName);
+                        }
+
                     } else {
                         Toast.makeText(getApplicationContext(), getString(R.string.userFailed),  Toast.LENGTH_SHORT).show();
                     }

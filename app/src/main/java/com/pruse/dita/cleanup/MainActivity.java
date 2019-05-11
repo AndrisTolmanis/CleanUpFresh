@@ -20,7 +20,6 @@ import com.google.firebase.auth.FirebaseAuth;
 
 public class MainActivity extends Activity {
     public static final String EXTRA_MESSAGE = "Tev sanāks!";
-    DatabaseHelper myDb;
     EditText txtUsername;
     EditText txtPassword;
     ImageView hiddenFrame;
@@ -34,7 +33,6 @@ public class MainActivity extends Activity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_main);
         mAuth = FirebaseAuth.getInstance();
-        myDb = new DatabaseHelper(this);
         txtUsername = findViewById(R.id.editText_name);
         txtPassword = findViewById(R.id.editText_password);
         hiddenFrame = findViewById(R.id.imgHidden);
@@ -56,7 +54,7 @@ public class MainActivity extends Activity {
     }
 
     public void userLogin(){
-        final String username = txtUsername.getText().toString();
+        final String username = txtUsername.getText().toString().replace(" ","");
         String password = txtPassword.getText().toString();
 
         if (username.isEmpty()){

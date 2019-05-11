@@ -9,6 +9,7 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
+import android.service.autofill.UserData;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -38,13 +39,10 @@ import static android.widget.TextView.BufferType.EDITABLE;
 
 public class UserActivity extends Activity {
 
-    String user_id,user_name, username, password, tempName, nfc = "", goodie_code = "BEF9A755";
+    String user_id,user_name, username, password, tempName, nfc = "", goodie_code = "";
     int balance;
     int tempPrice = 0;
     // BEF9A755  MAR60TS
-
-    // Definē db
-    DatabaseHelper myDb;
 
     // NFC taga adapteris
     NfcAdapter nfcAdapter;
@@ -80,9 +78,9 @@ public class UserActivity extends Activity {
 
     int usersBalance = 0;
     TextView txtBalance;
-    UserData userdata = new UserData();
-    RewardsData rewardsdata = new RewardsData();
-    List rewards;
+    Users userdata = new Users();
+    List<RewardsData> rewards = new ArrayList<>();
+    List<Users> usersList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -121,7 +119,7 @@ public class UserActivity extends Activity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 System.out.println(dataSnapshot);
-                userdata = dataSnapshot.getValue(UserData.class);
+                userdata = dataSnapshot.getValue(Users.class);
                 balance = userdata.getBalance();
                 txtBalance.setText(Integer.toString(balance));
             }
@@ -129,21 +127,39 @@ public class UserActivity extends Activity {
             public void onCancelled(@NonNull DatabaseError databaseError) {}
         });
 
-        //pieslēdzas db
-        myDb = new DatabaseHelper(this);
-
-        //tiek pie visiem DB datiem, nolasa lietotājvārdu un punktu bilanci lietotājam ar attiecīgo user_id
-        Cursor res = myDb.getAllData();
-        while (res.moveToNext()) {
-            if (res.getString(0).equals(user_id)) {
-                username = res.getString(1);
-                password = res.getString(2);
-                balance = res.getInt(3);
+        // DB pieprasījums lai atgriestu apbalvojumu datus
+        ref = dbRef.child("rewards");
+        query = ref;
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                System.out.println(dataSnapshot);
+                for (DataSnapshot ds: dataSnapshot.getChildren()){
+                    RewardsData rews = ds.getValue(RewardsData.class);
+                    rewards.add(rews);
+                }
             }
-        }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {}
+        });
+
+        // DB pieprasījums lai atgristu visu lietotāju datus
+        ref = dbRef.child("userData");
+        query = ref.orderByChild("balance");
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                System.out.println(dataSnapshot);
+                for (DataSnapshot ds: dataSnapshot.getChildren()) {
+                    Users user = ds.getValue(Users.class);
+                    usersList.add(user);
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {}
+        });
 
         //te sākas apakšējās pogas
-
         //teksti, kas parādīsies spiežot uz pogām
         question = findViewById(R.id.editText_question);
         goodies = findViewById(R.id.editText_goodies);
@@ -216,26 +232,10 @@ public class UserActivity extends Activity {
         //poga "Balvas"
         btnShowGoodies.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                RewardsData rewardsData = new RewardsData();
-                DatabaseReference ref = dbRef.child("rewards").child("coffe");
-                Query query = ref;
-                query.addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        System.out.println(dataSnapshot);
-
-                    }
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {}
-                });
-
-                //nolasa visus datus atbilsotši getAllGoodies()
-                Cursor res = myDb.getAllGoodies();
-
                 //saglabā apbalvojums vērtību un nosaukumu
                 StringBuilder allGoodies = new StringBuilder();
-                while (res.moveToNext()) {
-                    allGoodies.append(res.getString(2) + " punkti - " + res.getString(1) +"\n\n");
+                for (RewardsData reward : rewards){
+                    allGoodies.append(reward.getCost() + " punkti: " + reward.getName() +"\n\n");
                 }
                 goodies.setText(allGoodies.toString());
 
@@ -250,16 +250,12 @@ public class UserActivity extends Activity {
         //poga "Tops"
         btnShowTop.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-
-                //nolasa visus datus atbilsotši getTop() (sakārtotus pēc bilances no lielākā uz mazāko)
-                Cursor res = myDb.getTop();
-
-                //saglabā cilvēka punktu bilanci un lietotājvārdu
                 StringBuilder topUsers = new StringBuilder();
+                topUsers.setLength(0);
                 int i=0;
-                while (res.moveToNext()) {
+                for(int ii=usersList.size()-1; ii>=0; ii--){
                     i++;
-                    topUsers.append(i+ ". "+res.getString(3) + " - " + res.getString(1) +"\n\n");
+                    topUsers.append(i+ ". "+ usersList.get(ii).getBalance() + " - " + usersList.get(ii).getUsersName() +"\n\n");
                 }
                 top.setText(topUsers.toString());
 
@@ -290,6 +286,7 @@ public class UserActivity extends Activity {
         startActivity(intent);
     }
 
+    // Nfc magic
     @Override
     protected void onNewIntent(Intent intent){
         if (nfcAdapter != null) {
@@ -300,15 +297,10 @@ public class UserActivity extends Activity {
                 nfcSearch = false;
                 //nolasa visus datus atbilsotši getAllGoodies()
 
-                //pieslēdzas db
-                myDb = new DatabaseHelper(this);
-                Cursor res = myDb.getAllGoodies();
-
-                //maklē apbalvojumu pēc nolasītās nfc vērtības
-                while (res.moveToNext()) {
-                    if (res.getString(3).equals(nfc)) {
-                        tempName = res.getString(1);
-                        tempPrice = res.getInt(2);
+                for (RewardsData reward : rewards){
+                    if(nfc.equals(reward.getNfcCode())){
+                        tempName = reward.getName();
+                        tempPrice = reward.getCost();
                         break;
                     }
                 }
@@ -336,7 +328,6 @@ public class UserActivity extends Activity {
             nfcTagSerialNumber = bytesToHex(nfcTagID);
         }
     }
-
 
     @Override
     protected void onResume() {
@@ -366,39 +357,38 @@ public class UserActivity extends Activity {
         return new String(hexChars);
     }
 }
-class UserData{
-    private int balance;
+// Apbalvojum datu modelis
+class RewardsData{
+    private String nfcCode;
     private String name;
-    private String surname;
+    private int cost;
 
-    public int getBalance() {
-        return balance;
+    public RewardsData(){}
+    public RewardsData(String nfcCode, String name, int cost){
+        this.nfcCode = nfcCode;
+        this.name = name;
+        this.cost = cost;
     }
+
     public String getName(){
         return name;
     }
-    public String getSurname(){
-        return surname;
-    }
-}
-
-class RewardsData{
-    private String name;
-    private String nfcCode;
-    private int price;
-    private int id;
-
-
-    public String getRewardName(){
-        return name;
-    }
-    public int getRewardPrice(){
-        return price;
-    }
-    public int getRewardId(){
-        return id;
-    }
     public String getNfcCode(){
         return nfcCode;
+    }
+    public int getCost(){
+        return cost;
+    }
+}
+// Lietotāju datu modelis
+class Users{
+    private String usersName;
+    private int balance;
+
+    public String getUsersName(){
+        return usersName;
+    }
+    public int getBalance(){
+        return balance;
     }
 }

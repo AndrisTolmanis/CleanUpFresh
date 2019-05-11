@@ -4,7 +4,7 @@
     <string name="info_text">Sveiks lietotāj! Šī aplikācija Tev ļauj apskatīt savu punktu bilanci, izmantot NFC nolasīšanas iespēju, redzēt pieejamos apbalvojumus kā arī aktīvākos šķirotājus.  </string>
 
     <string name="hello">Sveiki, </string>
-    <string name="your_balance">Tava bilance :</string>
+    <string name="your_balance">Tava punktu bilance :</string>
 
     <string name="admin">ADMIN</string>
     <string name="is_admin">Vai tiešām esi admins?</string>
@@ -13,6 +13,7 @@
     <string name="username">E-pasts</string>
     <string name="password">Parole</string>
     <string name="balance">Bilance</string>
+    <string name="usersName">Lietotāja nosaukums</string>
 
     <string name="nfc_goodie">Izvēlētais apbalvojums : </string>
     <string name="nfc_points">Nepieciešamie punkti : </string>
@@ -20,7 +21,7 @@
     <string name="nfc_waiting">Gaida NFC savienojumu</string>
     <string name="nfc_NoNfcOnDevice">Šai ierīcei nav pieejams NFC</string>
     <string name="expensive">Nepietiek punktu</string>
-    <string name="goodie_code">Tava dzēriena kods: </string>
+    <string name="goodie_code">Apbalvojus apmaksāts </string>
 
     <string name="name">Nosaukums</string>
     <string name="price">Vērtība</string>
@@ -64,6 +65,5 @@
     <string name="userAdded">User added</string>
     <string name="userFailed">Adding failed</string>
     <string name="loginFailed">Neizdevās pieslēgties</string>
-    <!--<string name="loginSuccess">Izdevās pieslēgties</string>-->
 
 </resources>

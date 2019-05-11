@@ -32,7 +32,6 @@
         <activity android:name=".AdminActivity" />
         <activity android:name=".UserActivity" />
         <activity android:name=".EditUsersActivity" />
-        <activity android:name=".EditGoodiesActivity"></activity>
     </application>
 
 </manifest>
